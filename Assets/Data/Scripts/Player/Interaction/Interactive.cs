@@ -117,11 +117,11 @@ public class Interactive : MonoBehaviour
 
             else if(_type == InteractiveType._PANELINTERACTION)
             {
-                // 
+                _curInteractionTextId = (_curInteractionTextId + 1) % _interactionTexts.Length;
                 //_curInteractionTextId = (_curInteractionTextId + 1) % _interactionTexts.Length;
 
-               //ActivateDoorFunctions(); 
-                 
+                //ActivateDoorFunctions(); 
+
             }
             ProcessActivationChain();
             ProcessInteractionChain();
@@ -157,13 +157,6 @@ public class Interactive : MonoBehaviour
         Destroy(this.gameObject); 
 
 
-    }
-
-    private void ActivateDoorFunctions()
-    {
-        Handler.DoorCO();
-
-     
     }
 
     private void OnDrawGizmos()

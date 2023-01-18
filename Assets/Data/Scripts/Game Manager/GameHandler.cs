@@ -1,41 +1,46 @@
 using UnityEngine;
+using UnityEngine.SceneManagement; 
 using TMPro;
 using System.Collections;
+using System;
 
 public class GameHandler : MonoBehaviour
 {
     public int[] floorSequence;
     public int floorSequenceIndex = 0;
 
-
+    public enum GameState { ACTIVE, BROKEN}
+    private GameState ritualState; 
 
     public enum DoorState { Closed, Open, Closing, Opening }
     public DoorState state;
 
-    [SerializeField] private CameraShake Shake;
+    private Barrier CheatBarrier; 
+
+    private CameraShake Shake;
     [SerializeField] private GameObject doorLeft, doorRight;
 
-    [Header("Correct Game Scene")]
-    [SerializeField] private GameObject Scene1, Scene2, Scene3, Scene4, EndScene;
 
-    [Header("InCorrect Game Scene")]
-    [SerializeField] private GameObject IScene1, IScene2, IScene3, IScene4, IEndScene;
+    [Header("Levels")][SerializeField] private GameObject Scene1;
+
+    [SerializeField] GameObject Scene2, Scene3, Scene4, EndScene;
+
+    [SerializeField] private GameObject Scene5, Scene6, Scene7, Scene8, Scene9;
 
 
 
     // Open and close distance checkers
+    [Tooltip("Door Config")]
     [SerializeField] private GameObject OpenPosLeft, OpenPosRight, ClosePosLeft, ClosePosRight;
 
 
     //  Condition to open doors
-
-    private bool _canOpen, _canClose;
-    private bool _openInput = true;
-    private bool _closeInput;
     public bool _canInteract;
 
-
     private int selectedFloor;
+
+
+    private int WrongFloor = 5; 
 
 
     // level input bools
@@ -71,12 +76,15 @@ public class GameHandler : MonoBehaviour
     {
 
 
+        ritualState = GameState.ACTIVE; 
+        state = DoorState.Opening;
 
-        state = DoorState.Open;
+        FloorText.text = "1";
 
-        _closeInput = false;
-        _canOpen = true;
 
+        Shake = FindObjectOfType<CameraShake>();
+
+        CheatBarrier = GetComponentInChildren<Barrier>();   
 
 
 
@@ -84,6 +92,11 @@ public class GameHandler : MonoBehaviour
         Scene2.SetActive(false);
         Scene3.SetActive(false);
         Scene4.SetActive(false);
+        Scene5.SetActive(false);
+        Scene6.SetActive(false);
+        Scene7.SetActive(false);
+        Scene8.SetActive(false);
+        Scene9.SetActive(false);
 
 
         //IScene2.SetActive(false);
@@ -102,21 +115,11 @@ public class GameHandler : MonoBehaviour
         else if (state == DoorState.Closing)
             DoorClose();
 
-
-
-        //DoorCO();
-
         // player input
         PlayerInput();
 
         // dist check 
         MinimalDistCheck();
-
-        // bool check
-        ConditionChecker();
-
-
-  
 
         /*TEST CODE;
 
@@ -137,9 +140,10 @@ public class GameHandler : MonoBehaviour
             {
 
                 print("CLOSING");
+                selectedFloor = 1;
                 state = DoorState.Closing;
 
-                selectedFloor = 1;
+                
             }
             else if (Input.GetKeyDown(KeyCode.Alpha2))
             {
@@ -157,126 +161,310 @@ public class GameHandler : MonoBehaviour
                 selectedFloor = 4;
                 state = DoorState.Closing;
             }
-
-
-
-        }
-        /*
-        else if (_canInteract && state == DoorState.Closed)
-        {
-
-
-        }
-        */
-
-        /*
-
-        if (Input.GetKeyDown(KeyCode.E) && _canInteract)
-        {
-            if (state == DoorState.Open)
+            else if (Input.GetKeyDown(KeyCode.Alpha5))
             {
-                DoorClose();
+                selectedFloor = 5;
+                state = DoorState.Closing;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha6))
+            {
+                selectedFloor = 6;
+                state = DoorState.Closing;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha7))
+            {
+                selectedFloor = 7;
+                state = DoorState.Closing;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha8))
+            {
+                selectedFloor = 8;
+                state = DoorState.Closing;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha9))
+            {
+                selectedFloor = 9;
+                state = DoorState.Closing;
             }
 
 
+
         }
-        */
+        
 
     }
-
-    public void DoorCO()
-    {
-        /*
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            //_canInteract = true;
-        }
-        */
-
-    }
-
 
     #endregion
 
-    #region Ditance Check
-
-
-    #endregion
-
-    private void ConditionChecker()
-    {
-
-
-    }
-
-
+    
 
 
     private void SceneLoader(int Floor)
     {
-
-        switch (Floor)
+        if(ritualState == GameState.ACTIVE)
         {
+            switch (Floor)
+            {
+
+                case 1:
+                    {
+                        // TO DO: 
+                        // disable current scene
+
+                        Scene1.SetActive(true); // level 1
+                        Scene2.SetActive(false);
+                        Scene3.SetActive(false);
+                        Scene4.SetActive(false);
+                        Scene5.SetActive(false);
+                        Scene6.SetActive(false);
+                        Scene7.SetActive(false);
+                        Scene8.SetActive(false);
+                        Scene9.SetActive(false);
+
+                        FloorText.text = "1";
+                        Debug.Log("Scene 1: disabled / Scene 2: enabled");
+                        break;
+                    }
+
+                case 2:
+                    {
+                        Scene1.SetActive(false);
+                        Scene2.SetActive(true); // level 2
+                        Scene3.SetActive(false);
+                        Scene4.SetActive(false);
+                        Scene5.SetActive(false);
+                        Scene6.SetActive(false);
+                        Scene7.SetActive(false);
+                        Scene8.SetActive(false);
+                        Scene9.SetActive(false);
+
+                        FloorText.text = "2";
+
+                        Debug.Log("Scene 2: disabled / Scene 3: enabled");
+                        break;
+                    }
+
+                case 3:
+                    {
+                        Scene1.SetActive(false);
+                        Scene2.SetActive(false);
+                        Scene3.SetActive(true); // level 3
+                        Scene4.SetActive(false);
+                        Scene5.SetActive(false);
+                        Scene6.SetActive(false);
+                        Scene7.SetActive(false);
+                        Scene8.SetActive(false);
+                        Scene9.SetActive(false);
+
+                        FloorText.text = "3";
+
+                        Debug.Log("Scene 3: disabled / Scene 4: enabled");
+                        break;
+                    }
+
+                case 4:
+                    {
+                        Scene1.SetActive(false);
+                        Scene2.SetActive(false);
+                        Scene3.SetActive(false);
+                        Scene4.SetActive(true); // level 4 
+                        Scene5.SetActive(false);
+                        Scene6.SetActive(false);
+                        Scene7.SetActive(false);
+                        Scene8.SetActive(false);
+                        Scene9.SetActive(false);
+
+                        FloorText.text = "4";
 
 
-            case 0:
-                {
-                    // DIALOG WITH PLAYER
-                    FloorText.text = "0";
-                    break;
-                }
+                        break;
+                    }
+                case 5:
+                    {
+                        Scene1.SetActive(false);
+                        Scene2.SetActive(false);
+                        Scene3.SetActive(false);
+                        Scene4.SetActive(false);
+                        Scene5.SetActive(true); // level 5
+                        Scene6.SetActive(false);
+                        Scene7.SetActive(false);
+                        Scene8.SetActive(false);
+                        Scene9.SetActive(false);
 
-            case 1:
-                {
-                    // TO DO: 
-                    // disable current scene
+                        FloorText.text = "5";
 
-                    Scene1.SetActive(false);
-                    Scene2.SetActive(true);
+                        //SceneManager.LoadScene("_EndGame");
 
-                    FloorText.text = "1";
-                    Debug.Log("Scene 1: disabled / Scene 2: enabled");
-                    break;
-                }
+                        break;
+                    }
+                case 6:
+                    {
+                        Scene1.SetActive(false);
+                        Scene2.SetActive(false);
+                        Scene3.SetActive(false);
+                        Scene4.SetActive(false);
+                        Scene5.SetActive(false);
+                        Scene6.SetActive(true); // level 6
+                        Scene7.SetActive(false);
+                        Scene8.SetActive(false);
+                        Scene9.SetActive(false);
 
-            case 2:
-                {
-                    Scene2.SetActive(false);
-                    Scene3.SetActive(true);
+                        FloorText.text = "6";
 
-                    FloorText.text = "2";
+                        //SceneManager.LoadScene("_EndGame");
 
-                    Debug.Log("Scene 2: disabled / Scene 3: enabled");
-                    break;
-                }
+                        break;
+                    }
+                case 7:
+                    {
+                        Scene1.SetActive(false);
+                        Scene2.SetActive(false);
+                        Scene3.SetActive(false);
+                        Scene4.SetActive(false);
+                        Scene5.SetActive(false);
+                        Scene6.SetActive(false);
+                        Scene7.SetActive(true); // level 7
+                        Scene8.SetActive(false);
+                        Scene9.SetActive(false);
 
-            case 3:
-                {
-                    Scene3.SetActive(false);
-                    Scene4.SetActive(true);
+                        FloorText.text = "7";
 
-                    FloorText.text = "3";
+                        //SceneManager.LoadScene("_EndGame");
 
-                    Debug.Log("Scene 3: disabled / Scene 4: enabled");
-                    break;
-                }
+                        break;
+                    }
+                case 8:
+                    {
+                        Scene1.SetActive(false);
+                        Scene2.SetActive(false);
+                        Scene3.SetActive(false);
+                        Scene4.SetActive(false);
+                        Scene5.SetActive(false);
+                        Scene6.SetActive(false);
+                        Scene7.SetActive(false);
+                        Scene8.SetActive(true); // level 8
+                        Scene9.SetActive(false);
 
-            case 4:
-                {
-                    Scene4.SetActive(false);
+                        FloorText.text = "8";
 
-                    FloorText.text = "4";
-                    //EndScene.SetActive(true);   
-                    //SceneManager.LoadScene("_EndGame");
+                        //SceneManager.LoadScene("_EndGame");
 
-                    break;
-                }
+                        break;
+                    }
+                case 9:
+                    {
+                        Scene1.SetActive(false);
+                        Scene2.SetActive(false);
+                        Scene3.SetActive(false);
+                        Scene4.SetActive(false);
+                        Scene5.SetActive(false);
+                        Scene6.SetActive(false);
+                        Scene7.SetActive(false);
+                        Scene8.SetActive(false);
+                        Scene9.SetActive(true); // level 9
 
+                        FloorText.text = "9";
 
+                        //SceneManager.LoadScene("_EndGame");
 
-            default: { break; }
+                        break;
+                    }
+                default: { break; }
+            }
+
+            
+           
 
         }
+        else if (ritualState == GameState.BROKEN)
+        {
+            switch (WrongFloor)
+            {
+
+                case 6:
+                    {
+                        // TO DO: 
+                        // disable current scene
+
+                        Scene1.SetActive(false); // level 1
+                        Scene2.SetActive(false);
+                        Scene3.SetActive(false);
+                        Scene4.SetActive(false);
+                        Scene5.SetActive(false);
+                        Scene6.SetActive(true);
+                        Scene7.SetActive(false);
+                        Scene8.SetActive(false);
+                        Scene9.SetActive(false);
+
+                        FloorText.text = "6";
+                        Debug.Log("Scene 1: disabled / Scene 2: enabled");
+                        break;
+                    }
+
+                case 7:
+                    {
+                        Scene1.SetActive(false);
+                        Scene2.SetActive(false); // level 2
+                        Scene3.SetActive(false);
+                        Scene4.SetActive(false);
+                        Scene5.SetActive(false);
+                        Scene6.SetActive(false);
+                        Scene7.SetActive(true);
+                        Scene8.SetActive(false);
+                        Scene9.SetActive(false);
+
+                        FloorText.text = "7";
+
+                        Debug.Log("Scene 2: disabled / Scene 3: enabled");
+                        break;
+                    }
+
+                case 8:
+                    {
+                        Scene1.SetActive(false);
+                        Scene2.SetActive(false); // level 2
+                        Scene3.SetActive(false);
+                        Scene4.SetActive(false);
+                        Scene5.SetActive(false);
+                        Scene6.SetActive(false);
+                        Scene7.SetActive(false);
+                        Scene8.SetActive(true);
+                        Scene9.SetActive(false);
+
+                        FloorText.text = "8";
+
+                        Debug.Log("Scene 2: disabled / Scene 3: enabled");
+                        break;
+                    }
+
+                case 9:
+                    {
+                        Scene1.SetActive(false);
+                        Scene2.SetActive(false); // level 2
+                        Scene3.SetActive(false);
+                        Scene4.SetActive(false);
+                        Scene5.SetActive(false);
+                        Scene6.SetActive(false);
+                        Scene7.SetActive(false);
+                        Scene8.SetActive(false);
+                        Scene9.SetActive(true);
+
+                        FloorText.text = "9";
+
+                        Debug.Log("Scene 2: disabled / Scene 3: enabled");
+                        break;
+                    }
+                default: { break; }
+
+
+
+            }
+
+        }
+
+
+
+
 
         // dispara 
 
@@ -296,7 +484,7 @@ public class GameHandler : MonoBehaviour
             bool leftOpen = false;
             bool RightOpen = false;
 
-
+            CheatBarrier.DeactivateColl();
 
             if ((OpenPosLeft.transform.position - doorLeft.transform.position).magnitude < minDist)
             {
@@ -337,6 +525,8 @@ public class GameHandler : MonoBehaviour
             bool leftClosed = false;
             bool RightClosed = false;
 
+            CheatBarrier.ActivateColl();
+
 
 
             if ((ClosePosLeft.transform.position - doorLeft.transform.position).magnitude < CloseDist)
@@ -353,37 +543,35 @@ public class GameHandler : MonoBehaviour
 
             if (leftClosed && RightClosed)
             {
-               
-
+                
                 //_canInteract = true;
                 //_closeInput = false;
 
                 //_canOpen = true;
                 //_canClose = false;
                 state = DoorState.Closed;
+                CheatBarrier.DeactivateColl();
                 print("CLOSED");
-
                 CheckSequence();
 
+                if (ritualState == GameState.BROKEN)
+                {
+                    WrongFloor++;
+
+                }
                 // TO DO 
                 // CALL IN COROTINA
 
-                StartCoroutine(TimeOut());
+                StartCoroutine(LoadLevel());
+                //StartCoroutine(TimeOut());
 
 
-                SceneLoader(selectedFloor);
+                //SceneLoader(selectedFloor);
 
 
             }
 
-            else
-            {
-                //state= DoorState.Transition;
-
-            }
-
-
-
+         
 
         }
 
@@ -395,12 +583,16 @@ public class GameHandler : MonoBehaviour
         {
             // to do 
             // garantir que floor index nao é out of bounds
+
+            ritualState= GameState.ACTIVE;  
             floorSequenceIndex++;
             if (floorSequenceIndex == floorSequence.Length)
             {
 
-
+                //SceneManager.LoadScene("_EndGame"); 
+                
                 print("final");
+
                 // nivel final
 
                 // selected floor = fim 
@@ -411,6 +603,8 @@ public class GameHandler : MonoBehaviour
         }
         else
         {
+
+            ritualState = GameState.BROKEN; 
             print("errou");
             floorSequenceIndex = 0;
         }
@@ -430,26 +624,12 @@ public class GameHandler : MonoBehaviour
         doorRight.transform.Translate(Vector3.left * speed * Time.deltaTime); // move right door left
     }
 
-    private void FloorTimeOut()
+    private IEnumerator LoadLevel()
     {
-        
-    }
-
-
-    private IEnumerator TimeOut()
-    {
-
-        new WaitForSeconds(5f);
-        state = DoorState.Opening;
-
-        return;
-
-    }
-
-
-    private void CameraShake()
-    {
-
+        Shake._canShake = true;
+        yield return new WaitForSeconds(6F);
+        Shake._canShake = false;
+        SceneLoader(selectedFloor);
     }
 
 }

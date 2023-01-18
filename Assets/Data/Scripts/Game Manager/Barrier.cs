@@ -2,6 +2,24 @@ using UnityEngine;
 
 public class Barrier : MonoBehaviour
 {
+
+    private Collider coll;
+
+
+    private void Start()
+    {
+        coll= GetComponent<Collider>();
+    }
+
+    public void DeactivateColl()
+    {
+        coll.enabled = false;
+    }
+    public void ActivateColl()
+    {
+        coll.enabled = true;
+    }
+
     /*
     private GameHandler GameDoors;
 
